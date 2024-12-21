@@ -1,4 +1,4 @@
-# LCMPublishingTemplate Changelog
+# SNCompany Changelog
 
 ## Describe your changes for each release here
 

@@ -1,6 +1,6 @@
-# LCMPublishingTemplate
+# SNCompany
 
-__PROJECT_DESC__
+First mod. Just a test.
 
 ## How to use this Template
 
