@@ -2,8 +2,12 @@
 
 First mod. Just a test.
 
-## How to use this Template
+## License
 
-For a complete guide on using this template to create a simple `Hello World` project see [Your First Mod](https://lethalcompanymodding.github.io/Thunderstore/www/Guides/Your-First-Mod.html)
+This project is licensed under [MIT License](https://github.com/Triangleman1/SNCompany/blob/main/LICENSE.md).
 
-Template Users: Make sure to remove this section after you create your project!
+## Credits
+
+This project uses [LCM-Template-TSPublishing](https://github.com/LethalCompanyModding/LCM-Template-TSPublishing), licensed under [Creative Commons CC0 1.0 Universal](https://github.com/LethalCompanyModding/LCM-Template-TSPublishing/blob/main/LICENSE.md).
+
+This project uses code from [MoreCompany](https://github.com/notnotnotswipez/MoreCompany), licensed under [MIT License](https://github.com/notnotnotswipez/MoreCompany/blob/master/LICENSE).
