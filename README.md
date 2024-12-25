@@ -1,10 +1,10 @@
 # SNCompany
 
-First mod. Just a test.
+Just a few personal tweaks. Replaced the logo. 
 
 ## License
 
-This project is licensed under [MIT License](https://github.com/Triangleman1/SNCompany/blob/main/LICENSE.md).
+This project is licensed under [MIT License](https://github.com/Triangleman1/SNCompany/blob/main/LICENSE).
 
 ## Credits
 
