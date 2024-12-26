@@ -10,6 +10,7 @@ namespace SNCompany.Patches
 	{
 		[HarmonyPatch(typeof(MenuManager), "Awake")]
 		[HarmonyPostfix]
+		//Lower priority means code runs later than other patches. MoreCompany's is 0.
 		[HarmonyPriority(-100)]
 		public static void MainMenuLogo(MenuManager __instance)
 		{
@@ -19,6 +20,7 @@ namespace SNCompany.Patches
 			}
 			try
 			{
+				//This code is shamelessly stolen from MoreCompany
 				Sprite logoImage = Sprite.Create(Plugin.mainLogo, new Rect(0, 0, Plugin.mainLogo.width, Plugin.mainLogo.height), new Vector2(0.5f, 0.5f));
                 GameObject parent = __instance.transform.parent.gameObject;
                 
