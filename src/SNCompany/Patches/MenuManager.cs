@@ -10,7 +10,7 @@ namespace SNCompany.Patches
 	{
 		[HarmonyPatch(typeof(MenuManager), "Awake")]
 		[HarmonyPostfix]
-		[HarmonyPriority(0)]
+		[HarmonyPriority(-100)]
 		public static void MainMenuLogo(MenuManager __instance)
 		{
 			if (__instance.isInitScene)
