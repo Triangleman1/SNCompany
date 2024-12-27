@@ -10,7 +10,7 @@ namespace SNCompany.Patches
 	{
 		[HarmonyPatch(typeof(MenuManager), "Awake")]
 		[HarmonyPostfix]
-		//Lower priority means code runs later than other patches. MoreCompany's is 0.
+		//Lower Harmony priority means code runs after higher priority patches. MoreCompany's priority is 0.
 		[HarmonyPriority(-100)]
 		public static void MainMenuLogo(MenuManager __instance)
 		{
@@ -46,5 +46,17 @@ namespace SNCompany.Patches
 				Plugin.Log.LogError((object)ex);
 			}
 		}
+	}
+
+	[HarmonyPatch]
+	static class HUD {
+		[HarmonyPatch(typeof(HUDManager), "ApplyPenalty")]
+		[HarmonyPrefix]
+		public static bool RemovePenalty() {
+			HUDManager.Instance.statsUIElements.penaltyAddition.text = "You guys suck\nStop dying";
+    		HUDManager.Instance.statsUIElements.penaltyTotal.text = "DUE: 0";
+			return false;
+		}
+
 	}
 }
