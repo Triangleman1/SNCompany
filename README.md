@@ -1,6 +1,14 @@
 # SNCompany
 
-Just a few personal tweaks. Replaced the logo. 
+Main menu logo is replaced with my own, personal, high quality rendition.
+
+Fines are removed. It wasn't as simple to remove the HUD popup, so I altered the text instead.
+
+Might add other small changes as I see fit. This is really just for me and my friends.
+
+# Contact
+
+Discord: triangleman10 
 
 ## License
 
