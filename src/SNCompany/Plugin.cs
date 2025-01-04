@@ -46,11 +46,7 @@ namespace SNCompany
 			public static double dungeonLengthAtGeneration;
 			public static int totalScrapObjects;
 			public static int scrapObjectsCollected;
-			public static double SThreshold = 100;
-			public static double AThreshold = 80;
-			public static double BThreshold = 60;
-			public static double CThreshold = 40;
-			public static double DThreshold = 20;
+			public static double[] gradeThresholds = [10,40,60,80,100];
 		}
 	}
 }

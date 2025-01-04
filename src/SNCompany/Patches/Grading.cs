@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using HarmonyLib;
+using UnityEngine.ProBuilder.MeshOperations;
 
 namespace SNCompany.Patches 
 {
@@ -39,7 +40,7 @@ namespace SNCompany.Patches
 
 		[HarmonyPatch(typeof(HUDManager), "FillEndGameStats")]
 		[HarmonyPostfix]
-		public static void FairGrading() {
+		public static void FairGrading(int scrapCollected) {
             // [U] = Unimplemented
             double scrapValueRate;
             double scrapObjectRate;
@@ -75,31 +76,39 @@ namespace SNCompany.Patches
 			// [U] Plugin.Log.LogInfo($"moonDifficulty: {moonDifficulty}");
             // [U] Plugin.Log.LogInfo($"interiorDifficulty: {interiorDifficulty}");
 
-            scrapValueRate = RoundManager.Instance.scrapCollectedInLevel / RoundManager.Instance.totalScrapValueInLevel;
-            scrapObjectRate = (double) Plugin.GradingInfo.scrapObjectsCollected / (double)Plugin.GradingInfo.totalScrapObjects;
-            weightedClearRate = valueFactor*scrapValueRate+(1-valueFactor)*scrapObjectRate;
-            totalDungeonCleared = weightedClearRate*(dungeonSize+moonOffset-interiorOffset);
-            branchDistance = Math.Pow(totalDungeonCleared,1+branchLengthIncreaseWithSize)*(2-stemBranchFactor);
-            //Relationship between increasing dungeon size and the exponentially increasing distance players must travel to clear it
-            mainPathDistance = (1/(stemBranchFactor+1))*(totalDungeonCleared*((totalDungeonCleared*stemBranchFactor*stemBranchFactor)+stemBranchFactor));
-            efficiency = 95*(branchDistance+mainPathDistance)/Math.Pow(numPlayers, groupInefficiency);
-            // [U] efficiencyBalanced = efficiencyScaled*(1+(moonDifficultyFactor*moonDifficulty))*interiorDifficulty
+			//TODO: Add bees to scrap rates. Terminal Code?
 
-            Plugin.Log.LogInfo($"scrapValueRate: {scrapValueRate}");
-			Plugin.Log.LogInfo($"scrapObjectRate: {scrapObjectRate}");
-            Plugin.Log.LogInfo($"WeightedClearRate: {weightedClearRate}");
-            Plugin.Log.LogInfo($"totalDungeonCleared: {totalDungeonCleared}");
-			Plugin.Log.LogInfo($"branchDistance: {branchDistance}");
-            Plugin.Log.LogInfo($"mainPathDistance: {mainPathDistance}");
-            Plugin.Log.LogInfo($"efficiency: {efficiency}");
-            // [U] Plugin.Log.LogInfo($"efficiencyBalanced: {efficiencyBalanced}");
+			if (StartOfRound.Instance.allPlayersDead) {
+				efficiency = 0;
+				Plugin.Log.LogInfo($"efficiency: 0 (All Players Lost)");
+			}
+			else {
+            	scrapValueRate = scrapCollected / RoundManager.Instance.totalScrapValueInLevel;
+            	scrapObjectRate = (double) Plugin.GradingInfo.scrapObjectsCollected / (double)Plugin.GradingInfo.totalScrapObjects;
+            	weightedClearRate = valueFactor*scrapValueRate+(1-valueFactor)*scrapObjectRate;
+				totalDungeonCleared = weightedClearRate*(dungeonSize+moonOffset-interiorOffset);
+            	branchDistance = Math.Pow(totalDungeonCleared,1+branchLengthIncreaseWithSize)*(2-stemBranchFactor);
+           		//Relationship between increasing dungeon size and the exponentially increasing distance players must travel to clear it
+            	mainPathDistance = (1/(stemBranchFactor+1))*(totalDungeonCleared*((totalDungeonCleared*stemBranchFactor*stemBranchFactor)+stemBranchFactor));
+            	efficiency = 95*(branchDistance+mainPathDistance)/Math.Pow(numPlayers, groupInefficiency);
+            	// [U] efficiencyBalanced = efficiencyScaled*(1+(moonDifficultyFactor*moonDifficulty))*interiorDifficulty
 
-            if (efficiency < Plugin.GradingInfo.DThreshold) HUDManager.Instance.statsUIElements.gradeLetter.text = "F";
-            else if (efficiency < Plugin.GradingInfo.CThreshold) HUDManager.Instance.statsUIElements.gradeLetter.text = "D";
-            else if (efficiency < Plugin.GradingInfo.BThreshold) HUDManager.Instance.statsUIElements.gradeLetter.text = "C";
-            else if (efficiency < Plugin.GradingInfo.AThreshold) HUDManager.Instance.statsUIElements.gradeLetter.text = "B";
-            else if (efficiency < Plugin.GradingInfo.SThreshold) HUDManager.Instance.statsUIElements.gradeLetter.text = "A";
-            else  HUDManager.Instance.statsUIElements.gradeLetter.text = "S";
+            	Plugin.Log.LogInfo($"scrapValueRate: {scrapValueRate}");
+				Plugin.Log.LogInfo($"scrapObjectRate: {scrapObjectRate}");
+            	Plugin.Log.LogInfo($"WeightedClearRate: {weightedClearRate}");
+            	Plugin.Log.LogInfo($"totalDungeonCleared: {totalDungeonCleared}");
+				Plugin.Log.LogInfo($"branchDistance: {branchDistance}");
+            	Plugin.Log.LogInfo($"mainPathDistance: {mainPathDistance}");
+				Plugin.Log.LogInfo($"efficiency: {efficiency}");
+            	// [U] Plugin.Log.LogInfo($"efficiencyBalanced: {efficiencyBalanced}");
+			}
+
+			if (efficiency < Plugin.GradingInfo.gradeThresholds[0]) HUDManager.Instance.statsUIElements.gradeLetter.text = "F";
+            else if (efficiency < Plugin.GradingInfo.gradeThresholds[1]) HUDManager.Instance.statsUIElements.gradeLetter.text = "D";
+            else if (efficiency < Plugin.GradingInfo.gradeThresholds[2]) HUDManager.Instance.statsUIElements.gradeLetter.text = "C";
+            else if (efficiency < Plugin.GradingInfo.gradeThresholds[3]) HUDManager.Instance.statsUIElements.gradeLetter.text = "B";
+            else if (efficiency < Plugin.GradingInfo.gradeThresholds[4]) HUDManager.Instance.statsUIElements.gradeLetter.text = "A";
+			else  HUDManager.Instance.statsUIElements.gradeLetter.text = "S";
 		}
 	}
 }
