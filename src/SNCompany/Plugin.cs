@@ -4,6 +4,7 @@ using BepInEx;
 using BepInEx.Logging;
 using UnityEngine;
 using HarmonyLib;
+using UnityEngine.Rendering.HighDefinition;
 
 namespace SNCompany
 {
@@ -38,6 +39,18 @@ namespace SNCompany
 			}
 
 			Log.LogInfo($"Plugin {LCMPluginInfo.PLUGIN_NAME} is loaded!");
+		}
+		public struct GradingInfo
+		{
+			public static int playersAtRoundStart;
+			public static double dungeonLengthAtGeneration;
+			public static int totalScrapObjects;
+			public static int scrapObjectsCollected;
+			public static double SThreshold = 100;
+			public static double AThreshold = 50;
+			public static double BThreshold = 30;
+			public static double CThreshold = 20;
+			public static double DThreshold = 10;
 		}
 	}
 }

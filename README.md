@@ -1,10 +1,8 @@
 # SNCompany
 
-Main menu logo is replaced with my own, personal, high quality rendition.
+I smeared my full name across the main menu logo, very terribly.
 
-Fines are removed. It wasn't as simple to remove the HUD popup, so I altered the text instead.
-
-Might add other small changes as I see fit. This is really just for me and my friends.
+Fines are removed. Replaced by a gentle chiding.
 
 # Contact
 
@@ -18,4 +16,4 @@ This project is licensed under [MIT License](https://github.com/Triangleman1/SNC
 
 This project uses [LCM-Template-TSPublishing](https://github.com/LethalCompanyModding/LCM-Template-TSPublishing), licensed under [Creative Commons CC0 1.0 Universal](https://github.com/LethalCompanyModding/LCM-Template-TSPublishing/blob/main/LICENSE.md).
 
-This project uses code from [MoreCompany](https://github.com/notnotnotswipez/MoreCompany), licensed under [MIT License](https://github.com/notnotnotswipez/MoreCompany/blob/master/LICENSE).
+This project uses code and an altered asset from [MoreCompany](https://github.com/notnotnotswipez/MoreCompany), licensed under [MIT License](https://github.com/notnotnotswipez/MoreCompany/blob/master/LICENSE).
