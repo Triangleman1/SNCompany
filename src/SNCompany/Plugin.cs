@@ -47,10 +47,10 @@ namespace SNCompany
 			public static int totalScrapObjects;
 			public static int scrapObjectsCollected;
 			public static double SThreshold = 100;
-			public static double AThreshold = 50;
-			public static double BThreshold = 30;
-			public static double CThreshold = 20;
-			public static double DThreshold = 10;
+			public static double AThreshold = 80;
+			public static double BThreshold = 60;
+			public static double CThreshold = 40;
+			public static double DThreshold = 20;
 		}
 	}
 }
