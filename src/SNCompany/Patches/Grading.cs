@@ -5,15 +5,36 @@ using HarmonyLib;
 
 namespace SNCompany.Patches 
 {
-[HarmonyPatch]
-	static class HUD {
-		[HarmonyPatch(typeof(HUDManager), "ApplyPenalty")]
+    [HarmonyPatch]
+	static class Grading {
+		[HarmonyPatch(typeof(StartOfRound), "openingDoorsSequence")]
+		[HarmonyPostfix]
+		public static void SavePlayersAtStart() {
+			Plugin.GradingInfo.playersAtRoundStart = HUDManager.Instance.playersManager.livingPlayers;
+            Plugin.Log.LogInfo($"Number of players saved as {Plugin.GradingInfo.playersAtRoundStart}");
+		}
+
+        [HarmonyPatch(typeof(RoundManager), "GenerateNewFloor")]
+		[HarmonyPostfix]
+		public static void SaveDungeonSize() {
+			Plugin.GradingInfo.dungeonLengthAtGeneration = RoundManager.Instance.dungeonGenerator.Generator.LengthMultiplier;
+            Plugin.Log.LogInfo($"Dungeon length saved as {Plugin.GradingInfo.dungeonLengthAtGeneration}");
+		}
+
+        [HarmonyPatch(typeof(RoundManager), "SyncScrapValuesClientRpc")]
+		[HarmonyPostfix]
+		public static void SaveTotalScrapAmount(GameObject[] spawnedScrap) {
+			Plugin.GradingInfo.totalScrapObjects = spawnedScrap.Length;
+            Plugin.Log.LogInfo($"Scrap Quantity saved as {Plugin.GradingInfo.totalScrapObjects}");
+		}
+
+		[HarmonyPatch(typeof(StartOfRound), "EndOfGameClientRpc")]
 		[HarmonyPrefix]
-		public static bool RemovePenalty() {
-			HUDManager.Instance.statsUIElements.penaltyAddition.text = "You guys suck\nStop dying";
-    		HUDManager.Instance.statsUIElements.penaltyTotal.text = "DUE: 0";
-			Plugin.Log.LogInfo($"Removed Fine");
-			return false;
+		public static void SaveCollectedScrapAmount() {
+
+			Plugin.Log.LogInfo($"Running SaveCollectedScrapAmount()");
+			Plugin.GradingInfo.scrapObjectsCollected = RoundManager.Instance.scrapCollectedThisRound.Count;
+            Plugin.Log.LogInfo($"Scrap Objects Collected saved as {Plugin.GradingInfo.scrapObjectsCollected}");
 		}
 
 		[HarmonyPatch(typeof(HUDManager), "FillEndGameStats")]
@@ -28,14 +49,14 @@ namespace SNCompany.Patches
             double mainPathDistance;
             double efficiency;
             // [U] double efficiencyBalanced;
-			double dungeonSize = Plugin.GradingInfo.dungeonLengthAtGeneration;
-			int numPlayersAtTakeoff = HUDManager.Instance.playersManager.allPlayerScripts.Length;
+			double dungeonSize = Plugin.GradingInfo.dungeonLengthAtGeneration/1.5;
+			int numPlayersAtTakeoff = HUDManager.Instance.playersManager.livingPlayers;
             int numPlayersAtLanding = Plugin.GradingInfo.playersAtRoundStart;
-            double numPlayers = ((double)numPlayersAtTakeoff + (double)numPlayersAtLanding) / 2;
+            double numPlayers = ((double)numPlayersAtTakeoff+(double)numPlayersAtLanding)/2;
 			double valueFactor = .4;
-            double stemBranchFactor = 1; //Portion of dungeon that is main path (as opposed to branches) assuming optimal exploration, out of 2.
+            double stemBranchFactor = 1; //Portion of dungeon time spent conveyoring items down main path (as opposed to initial exploration) while fully clearing dungeon size 1. Interior-dependent. Out of 2. (stemBranch = 1 means 50%). No fire exits or outdoor travel time.
 			double interiorOffset = 0;
-			double moonOffset = 0;
+			double moonOffset = 0; //Conveyor time added by ship to entrance travel time, and subtracted due to fire exit availability
             double branchLengthIncreaseWithSize = 0;
             // [U] double moonDifficultyScalar = .2;
             // [U] double moonDifficulty;
@@ -53,13 +74,13 @@ namespace SNCompany.Patches
             // [U] Plugin.Log.LogInfo($"interiorDifficulty: {interiorDifficulty}");
 
             scrapValueRate = RoundManager.Instance.scrapCollectedInLevel / RoundManager.Instance.totalScrapValueInLevel;
-            scrapObjectRate = Plugin.GradingInfo.totalScrapObjects / Plugin.GradingInfo.scrapObjectsCollected;
-            weightedClearRate = 0.5*(valueFactor*scrapValueRate+(1-valueFactor)*scrapObjectRate);
-            totalDungeonCleared = weightedClearRate*(dungeonSize-moonOffset-interiorOffset);
-            branchDistance = totalDungeonCleared*((totalDungeonCleared*branchLengthIncreaseWithSize)*(2-stemBranchFactor));
+            scrapObjectRate = (double) Plugin.GradingInfo.scrapObjectsCollected / (double)Plugin.GradingInfo.totalScrapObjects;
+            weightedClearRate = valueFactor*scrapValueRate+(1-valueFactor)*scrapObjectRate;
+            totalDungeonCleared = weightedClearRate*(dungeonSize+moonOffset-interiorOffset);
+            branchDistance = Math.Pow(totalDungeonCleared,1+branchLengthIncreaseWithSize)*(2-stemBranchFactor);
             //Relationship between increasing dungeon size and the exponentially increasing distance players must travel to clear it
-            mainPathDistance = (totalDungeonCleared)*(((totalDungeonCleared*stemBranchFactor*stemBranchFactor)-stemBranchFactor)/2);
-            efficiency = 220*(branchDistance+mainPathDistance)/numPlayers;
+            mainPathDistance = (1/(stemBranchFactor+1))*(totalDungeonCleared*((totalDungeonCleared*stemBranchFactor*stemBranchFactor)+stemBranchFactor));
+            efficiency = 165*(branchDistance+mainPathDistance)/numPlayers;
             // [U] efficiencyBalanced = efficiencyScaled*(1+(moonDifficultyFactor*moonDifficulty))*interiorDifficulty
 
             Plugin.Log.LogInfo($"scrapValueRate: {scrapValueRate}");
