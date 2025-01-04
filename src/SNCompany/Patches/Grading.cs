@@ -58,6 +58,7 @@ namespace SNCompany.Patches
 			double interiorOffset = 0;
 			double moonOffset = 0; //Conveyor time added by ship to entrance travel time, and subtracted due to fire exit availability
             double branchLengthIncreaseWithSize = 0;
+			double groupInefficiency = .625;
             // [U] double moonDifficultyScalar = .2;
             // [U] double moonDifficulty;
             // [U] double interiorDifficulty;
@@ -69,6 +70,7 @@ namespace SNCompany.Patches
 			Plugin.Log.LogInfo($"InteriorOffset: {interiorOffset}");
 			Plugin.Log.LogInfo($"MoonExponentialFactor: {moonOffset}");
             Plugin.Log.LogInfo($"BranchLengthIncreaseWithSize: {branchLengthIncreaseWithSize}");
+			Plugin.Log.LogInfo($"groupInefficiency: {groupInefficiency}");
             // [U] Plugin.Log.LogInfo($"moonDifficultyScalar: {moonDifficultyScalar}");
 			// [U] Plugin.Log.LogInfo($"moonDifficulty: {moonDifficulty}");
             // [U] Plugin.Log.LogInfo($"interiorDifficulty: {interiorDifficulty}");
@@ -80,7 +82,7 @@ namespace SNCompany.Patches
             branchDistance = Math.Pow(totalDungeonCleared,1+branchLengthIncreaseWithSize)*(2-stemBranchFactor);
             //Relationship between increasing dungeon size and the exponentially increasing distance players must travel to clear it
             mainPathDistance = (1/(stemBranchFactor+1))*(totalDungeonCleared*((totalDungeonCleared*stemBranchFactor*stemBranchFactor)+stemBranchFactor));
-            efficiency = 165*(branchDistance+mainPathDistance)/numPlayers;
+            efficiency = 95*(branchDistance+mainPathDistance)/Math.Pow(numPlayers, groupInefficiency);
             // [U] efficiencyBalanced = efficiencyScaled*(1+(moonDifficultyFactor*moonDifficulty))*interiorDifficulty
 
             Plugin.Log.LogInfo($"scrapValueRate: {scrapValueRate}");
