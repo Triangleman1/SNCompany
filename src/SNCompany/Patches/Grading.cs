@@ -18,8 +18,10 @@ namespace SNCompany.Patches
         [HarmonyPatch(typeof(RoundManager), "GenerateNewFloor")]
 		[HarmonyPostfix]
 		public static void SaveDungeonSize() {
-			Plugin.GradingInfo.dungeonLengthAtGeneration = RoundManager.Instance.dungeonGenerator.Generator.LengthMultiplier;
-            Plugin.Log.LogInfo($"Dungeon length saved as {Plugin.GradingInfo.dungeonLengthAtGeneration}");
+			Plugin.GradingInfo.dungeonLengthAtGeneration = RoundManager.Instance.currentLevel.factorySizeMultiplier;
+			Plugin.Log.LogInfo($"mapSizeMultiplier is {RoundManager.Instance.mapSizeMultiplier}");
+			Plugin.Log.LogInfo($"[currentDungeonType].MapTileSize as {RoundManager.Instance.dungeonFlowTypes[RoundManager.Instance.currentDungeonType].MapTileSize}");
+			Plugin.Log.LogInfo($"Dungeon length saved as {Plugin.GradingInfo.dungeonLengthAtGeneration} (currentLevel.factorySizeMultiplier)");
 		}
 
         [HarmonyPatch(typeof(RoundManager), "SyncScrapValuesClientRpc")]
@@ -50,8 +52,8 @@ namespace SNCompany.Patches
             double mainPathDistance;
             double efficiency;
             // [U] double efficiencyBalanced;
-			double dungeonSize = Plugin.GradingInfo.dungeonLengthAtGeneration/1.5;
-			int numPlayersAtTakeoff = HUDManager.Instance.playersManager.livingPlayers;
+			double dungeonSize = Plugin.GradingInfo.dungeonLengthAtGeneration;
+			int numPlayersAtTakeoff = RoundManager.Instance.playersManager.connectedPlayersAmount + 1;
             int numPlayersAtLanding = Plugin.GradingInfo.playersAtRoundStart;
             double numPlayers = ((double)numPlayersAtTakeoff+(double)numPlayersAtLanding)/2;
 			double valueFactor = .4;
