@@ -1,6 +1,3 @@
-using System;
-using UnityEngine;
-using UnityEngine.UI;
 using HarmonyLib;
 
 namespace SNCompany.Patches 
