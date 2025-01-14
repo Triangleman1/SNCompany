@@ -8,7 +8,7 @@ namespace SNCompany.Patches
 		[HarmonyPrefix]
 		public static bool RemovePenalty() {
 			if (Plugin.BoundConfig.removeFines.Value == true) {
-				HUDManager.Instance.statsUIElements.penaltyAddition.text = "COMPANY PROPERTY LOST\n\nALL OF YOU ARE UNSATISFACTORY ASSETS";
+				HUDManager.Instance.statsUIElements.penaltyAddition.text = "COMPANY PROPERTY LOST\n\nYOU ARE UNSATISFACTORY ASSETS";
 				HUDManager.Instance.statsUIElements.penaltyTotal.text = "DUE: 0";
 				Plugin.Log.LogDebug($"Removed Fine");
 				return false;
