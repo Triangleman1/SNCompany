@@ -14,7 +14,7 @@ namespace SNCompany.Patches
 		[HarmonyPriority(-100)]
 		public static void MainMenuLogo(MenuManager __instance)
 		{
-			if (__instance.isInitScene)
+			if (__instance.isInitScene || Plugin.BoundConfig.vandalizeLogo.Value == false)
 			{
 				return;
 			}

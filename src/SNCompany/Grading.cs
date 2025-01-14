@@ -6,25 +6,25 @@ using UnityEngine.SceneManagement;
 
 namespace SNCompany {
 	//TODO: Config
-	//TODO: Exterior scrap? SellBodies? Bees?
+	//TODO: Make exterior objects only count towards value
 	//TODO: StemBranch and interiorOffset for each interior
 	//TODO: Scaling with moon difficulty (will not be default)
 	//TODO: + and - Grades
     public static class Grading 
 	{
-		public static int numPlayersAtLanding;
+		public static int numPlayersAtLanding = 4;
 		public static double dungeonSize;
-		public static int totalScrapObjects;
-		public static int scrapObjectsCollected;
-		public static int scrapValueCollected;
+		public static int totalScrapObjects; //Only interior scrap
+		public static int scrapObjectsCollected; //Includes exterior scrap
+		public static int scrapValueCollected = 1000; //It seems like this is the same. Total -> interior. Collected -> Any
 		public static int numOfFireExits;
 
 		public static double[] gradeThresholds = [10,40,60,80,100];
 		public static double valueFactor = .5;
-		public static double fireExitEffect = .25; 		//0 assumes worst possible placement/utilization. 1 Assumes perfect placement and usage
+		public static double fireExitEffect = .5; 		//0 assumes worst possible placement/utilization. 1 Assumes perfect placement and usage
 		public static double groupInefficiency = 1-.3;	//Accounts for human nature
 		public static double exteriorTime = 3.87;		//Average exterior time spent carrying items to ship when clearing experimentation.
-		public static double k = 3; 					//Chosen such that 4 players fully clearing moons can get an S rank for march, offense, and adamance, but not for experimentation, assurance, or vow
+		public static double k = 5.42; 					//Calculated such that 4 players fully clearing moons can get an S rank for march, offense, and adamance, but not for experimentation, assurance, or vow
 		public static double moonDifficultyScalar = 0;	//Not used by default.
 
 		//Currently these values are only for experimentation and facility. Some may need to be found experimentally
@@ -35,11 +35,11 @@ namespace SNCompany {
 		public static double interiorOffset = .24; 		//Portion of scrap contained in branches that directly connect to main entrance at dungeon size 1. (No main path traversal required) 
 		public static double interiorDifficulty = 1;	//Not used by default
 
-		public static double moonDifficulty = 0;		//Not used by default.
+		public static double moonDifficulty = 0;		//Not used by default
 		public static string moonName = string.Empty;
 		public static double shipToEntranceTravelTime;
 
-		public static int numPlayersAtTakeoff;
+		public static int numPlayersAtTakeoff = 4;
 		public static double numPlayers;
 		public static double scrapValueRate;
 		public static double scrapObjectRate;
@@ -49,7 +49,7 @@ namespace SNCompany {
 		public static double numScrapInteriorOffset;
 		public static double branchDistance;
 		public static double mainPathDistance;
-		public static double mainPathNormalization; 	//Ensures mainPathDistance is equal to 1 when fully clearing experimentation.
+		public static double mainPathNormalization;
 		public static double moonPathDistance;
 		public static double totalDistanceCovered;
 		public static double efficiency;
@@ -59,39 +59,56 @@ namespace SNCompany {
 
         public static Dictionary<string, double> shipToEntranceTimes = new Dictionary<string, double>
             {
-				//Experimentally measured. Time from ship to entrance and back. No equipment/vehicles.
-                {"experimentation", 50},
-				{"assurance", 56.3},
-				{"vow", 61.15},
-				{"offense", 57.25},
-				{"march", 50.375},
-				{"adamance", 56.5},
-				{"rend", 66.5},
-				{"dine", 50.6},
-				{"titan", 37},
-				{"artifice", 50},
-				{"embrion", 67},
-				{"unknown", 54.79}
+				//Experimentally measured. Average time from ship to entrance and back, all entrances. No equipment/vehicles.
+                {"Experimentation", 50},
+				{"Assurance", 56.3},
+				{"Vow", 61.15},
+				{"Offense", 57.25},
+				{"March", 50.375},
+				{"Adamance", 56.5},
+				{"Rend", 66.5},
+				{"Dine", 50.6},
+				{"Titan", 37},
+				{"Artifice", 50},
+				{"Embrion", 67},
+				{"Unknown", 54.79}
             };
 		public static double experimentationTravelTime;
 
 		static Grading() {
-			experimentationTravelTime = shipToEntranceTimes["experimentation"];
+			if(!shipToEntranceTimes.ContainsKey("Experimentation") || !shipToEntranceTimes.ContainsKey("Offense")) 
+			{
+				experimentationTravelTime = 50;
+				shipToEntranceTravelTime = 57.25;
+				Plugin.Log.LogError("Cannot find keys in dictionary");
+			}
+			else 
+			{
+				experimentationTravelTime = shipToEntranceTimes["Experimentation"];
+				shipToEntranceTravelTime = shipToEntranceTimes["Offense"];
+			}
+
+			valueFactor = Plugin.BoundConfig.valueFactor.Value;
+			groupInefficiency = 1-Plugin.BoundConfig.groupInefficiency.Value;
+			fireExitEffect = Plugin.BoundConfig.fireExitEffect.Value;
 			
+			//S threshold values
 			numPlayers = 4;
-			shipToEntranceTravelTime = shipToEntranceTimes["offense"];
 			dungeonSize = 1.2;
 			numOfFireExits = 1;
 			weightedClearRate = 1;
 			scrapObjectsCollected = 14;
 			totalScrapObjects = 14;
+			k = 1;
 
 			//interiorOffset =
 			//mainPathTime =
 			//branchTime =
 
+			LogGradingVariables();
 			efficiency = CalculateEfficiencyPerPlayer();
-			k = 100/totalDistanceCovered/Math.Pow(4, groupInefficiency);
+			LogGradingCalculations();
+			k = 100/efficiency;
 			Plugin.Log.LogInfo($"Calculated k: {k}");
 		}
 
@@ -102,7 +119,7 @@ namespace SNCompany {
 			moonName = new string(StartOfRound.Instance.currentLevel.PlanetName.SkipWhile((char c) => !char.IsLetter(c)).ToArray());
 			Plugin.Log.LogInfo($"Moon: {moonName}\n");
 			if (shipToEntranceTimes.ContainsKey(moonName)) shipToEntranceTravelTime = shipToEntranceTimes[moonName];
-			else shipToEntranceTravelTime = shipToEntranceTimes["unknown"];
+			else shipToEntranceTravelTime = shipToEntranceTimes["Unknown"];
 
 			scrapValueCollected = scrapCollected;
 			scrapValueRate = (double)scrapValueCollected / (double)RoundManager.Instance.totalScrapValueInLevel;
@@ -115,7 +132,7 @@ namespace SNCompany {
 		}
 
 		public static void LogGradingVariables() {
-			debug = $"dungeonSize: {dungeonSize}\n";
+			debug = $"\ndungeonSize: {dungeonSize}\n";
 			debug += $"numofFireExits: {numOfFireExits}\n";
 			debug += $"numPlayersAtTakeoff: {numPlayersAtTakeoff}\n";
 			debug += $"numPlayersAtLanding: {numPlayersAtLanding}\n";
@@ -172,13 +189,14 @@ namespace SNCompany {
         }
 
 		public static void LogGradingCalculations() {
-			debug += $"totalDungeonCleared (branches): {totalDungeonClearedBranches}\n";
+			debug = $"\ntotalDungeonCleared (branches): {totalDungeonClearedBranches}\n";
 			debug += $"branchDistance: {branchDistance}\n";
 			debug += $"totalDungeonCleared (main path): {totalDungeonClearedMainPath}\n";
 			debug += $"numScrapInteriorOffset: {numScrapInteriorOffset}\n";
 			debug += $"mainPathNormalizationFactor: {mainPathNormalization}\n";
 			debug += $"mainPathDistance: {mainPathDistance}\n";
 			debug += $"moonPathDistance: {moonPathDistance}\n";
+			debug += $"totalDistanceCovered: {totalDistanceCovered}\n";
 			debug += $"efficiency: {efficiency}\n";
 			debug += $"efficiencyDifficultyAdjusted: {efficiencyAdjusted}\n";
 			Plugin.Log.LogInfo(debug);
@@ -186,8 +204,8 @@ namespace SNCompany {
 
 		public static int FindNumOfFireExits()
 		{
+			//Code partially sourced from IAmBatby's LethalLevelLoader
 			int num = 0;
-			//StartOfRound.Instance.NetworkManager.
 			Scene scene = SceneManager.GetSceneByName(StartOfRound.Instance.currentLevel.sceneName);
 			GameObject[] rootGameObjects = scene.GetRootGameObjects();
 			foreach (GameObject gameObject in rootGameObjects)

@@ -1,19 +1,18 @@
 # SNCompany
 
-I smeared my full name across the main menu logo, very terribly.
+Personal tweaks and prototypes:
 
 Fines are removed. Replaced by a gentle chiding.
 
 New grading algorithm properly represents player effort and efficiency.
-Takes into account:
+It takes into account:
   - Dungeon Size, and the exponential time increase of exploring larger dungeons
   - Players connected
   - Quantity of scrap recovered, rather than just quality
-  - Fire exits 
-  - Traversal time of each vanilla moon
+  - Fire exits
+  - Traversal time across each vanilla moon
 
-    
-With more players at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense is the S threshold I balanced for.
+With more players at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense/march is the S threshold I balanced for.
 
 # Contact
 

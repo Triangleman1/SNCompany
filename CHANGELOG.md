@@ -2,12 +2,18 @@
 
 ## 1.2.0
 - Grading algorithm improvements
-  - Finds the number of fire exits, scales accordingly
-  - Seperated moon traversal time into its own equation
-    - Average time between ship and entrances experimentally determined for every vanilla moon, taken into account
+  - Finds the number of fire exits, lowers dungeon size accordingly
+  - Separated moon traversal time into its own equation
+    - Average time between ship and entrances experimentally determined and applied for every vanilla moon
   - Accounts for scrap density
   - No longer affected by tile size variable (mansion would have significantly lower grades due to its unique value)
-  - Automatically calculates final constant (opens the door for a config later)
+  - Automatically calculates final constant based off a certain threshold, allowing for config adjustments without issues
+- Config
+  - Enable/Disable each feature. Logo vandalism is off by default. 
+  - Can alter certain subjective factors:
+    - How much to prioritize scrap quantity versus scrap quality (value)
+    - How much additional fire exits reduce dungeon size
+    - The relationship between number of players and how much is expected of them (efficiency per player generally decreases in larger groups)
 
 
 ## 1.1.0

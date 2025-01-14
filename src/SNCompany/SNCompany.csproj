@@ -10,12 +10,12 @@
     -->
     <AssemblyName>com.github.triangleman.sncompany</AssemblyName>
     <Authors>Triangleman</Authors>
-    <Description>A few personal tweaks. Replaced Grading Algorithm. Put in my own main menu logo. Removed fines.</Description>
+    <Description>Makes grading algorithm significantly more advanced, now measuring efficiency per player. Removed fines. Configurable.</Description>
     <Product>SNCompany</Product>
     <!--
       Except this, you should keep this up to date with your publishing tags.
     -->
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
 
     <!-- 
       You shouldn't have to change these, but you could if you wanted to.
