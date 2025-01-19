@@ -18,6 +18,18 @@
           "HarmonyX": "2.7.0"
         }
       },
+      "IAmBatby.LethalLevelLoader": {
+        "type": "Direct",
+        "requested": "[1.4.0, )",
+        "resolved": "1.4.0",
+        "contentHash": "Ok9ANF0gu3NcK74PnxQimmscjB5Yy+E18ryuMm9irBPPNCAMnd4dSOw2HH3b7uEXzbhKhW+uhHRWdM2UfTuf0Q==",
+        "dependencies": {
+          "BepInEx.Core": "5.4.21",
+          "Evaisa.LethalLib": "0.16.0",
+          "LethalCompany.GameLibs.Steam": "67.0.0-ngd.0",
+          "MaxWasUnavailable.LethalModDataLib": "1.2.2"
+        }
+      },
       "LethalCompany.GameLibs.Steam": {
         "type": "Direct",
         "requested": "[67.0.0-ngd.0, )",
@@ -28,10 +40,34 @@
           "UnityEngine.Modules": "2022.3.9"
         }
       },
+      "MaxWasUnavailable.LethalModDataLib": {
+        "type": "Direct",
+        "requested": "[1.2.2, )",
+        "resolved": "1.2.2",
+        "contentHash": "sIvyoqkr6YH9UMxhPjw7i7W9JyRFNFwt9Dx+eDGT+JbuHx1PzAQvWiIb7GNpzE6eeHy1UDjjPE0N859YMXcN3A==",
+        "dependencies": {
+          "BepInEx.Core": "5.4.21",
+          "BepInEx.PluginInfoProps": "1.1.0",
+          "UnityEngine.Modules": "2022.3.9"
+        }
+      },
       "BepInEx.BaseLib": {
         "type": "Transitive",
         "resolved": "5.4.20",
         "contentHash": "0bXgYxbCEN2Ixp3kiFEhyw+RASeFQeg/ww+lbMt7if6XMeVS60eg6epNsMA8Jbx57dmNOzNevkKKw8mP8SUMqw=="
+      },
+      "BepInEx.PluginInfoProps": {
+        "type": "Transitive",
+        "resolved": "1.1.0",
+        "contentHash": "RqM3aaGs8Hc2m0D+8aSt9mv09rCMYNIF35NB3D6KA2zSpcXJh/9ZVWrPlIUJfA8KYzodSWcCMUexEW24fjwR3w=="
+      },
+      "Evaisa.LethalLib": {
+        "type": "Transitive",
+        "resolved": "0.16.0",
+        "contentHash": "4kxRiEA08YWcRMOaxFFiUxgfjFbGua9n2plM27Hse6YQ2zuXPMm3BagOX4vYM/XTH0P50giITeXqKRS0BUYQJQ==",
+        "dependencies": {
+          "BepInEx.Core": "5.4.21"
+        }
       },
       "HarmonyX": {
         "type": "Transitive",

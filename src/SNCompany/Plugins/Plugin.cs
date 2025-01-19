@@ -8,6 +8,8 @@ using HarmonyLib;
 namespace SNCompany
 {
 	[BepInPlugin(LCMPluginInfo.PLUGIN_GUID, LCMPluginInfo.PLUGIN_NAME, LCMPluginInfo.PLUGIN_VERSION)]
+	[BepInDependency("imabatby.lethallevelloader", "1.4.0")]
+	[BepInDependency("MaxWasUnavailable.LethalModDataLib", "1.2.0")] 
 	public class Plugin : BaseUnityPlugin
 	{
 		public static ManualLogSource Log = null!;

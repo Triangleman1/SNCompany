@@ -10,7 +10,7 @@
     -->
     <AssemblyName>com.github.triangleman.sncompany</AssemblyName>
     <Authors>Triangleman</Authors>
-    <Description>Makes grading algorithm significantly more advanced, now measuring efficiency per player. Removed fines. Configurable.</Description>
+    <Description>Makes grading algorithm significantly more advanced, now measuring time efficiency per player. Removed fines. Configurable.</Description>
     <Product>SNCompany</Product>
     <!--
       Except this, you should keep this up to date with your publishing tags.
@@ -48,7 +48,14 @@
       Include="LethalCompany.GameLibs.Steam"
       Version="67.0.0-ngd.0"
     />
-
+    <PackageReference 
+      Include="IAmBatby.LethalLevelLoader" 
+      Version="1.4.0" 
+    />
+    <PackageReference 
+      Include="MaxWasUnavailable.LethalModDataLib" 
+      Version="1.2.2" 
+    />
     <!--
       When adding additional references, ensure you use <Private>false</Private> to
       ensure the DLL is explicitly NOT copied to the output directory. This is because

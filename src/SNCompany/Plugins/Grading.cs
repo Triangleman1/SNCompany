@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SNCompany {
-	//TODO: Config
 	//TODO: Make exterior objects only count towards value
 	//TODO: StemBranch and interiorOffset for each interior
 	//TODO: Scaling with moon difficulty (will not be default)
 	//TODO: + and - Grades
     public static class Grading 
 	{
+		public static int numPlayersAtTakeoff = 4;
 		public static int numPlayersAtLanding = 4;
 		public static double dungeonSize;
-		public static int totalScrapObjects; //Only interior scrap
-		public static int scrapObjectsCollected; //Includes exterior scrap
-		public static int scrapValueCollected = 1000; //It seems like this is the same. Total -> interior. Collected -> Any
+		public static int totalScrapObjects; 			//Only interior scrap
+		public static int scrapObjectsCollected; 		//Includes exterior scrap
+		public static int scrapValueCollected = 1000; 	//It seems like this is the same. Total -> interior. Collected -> Any
 		public static int numOfFireExits;
 
-		public static double[] gradeThresholds = [10,40,60,80,100];
 		public static double valueFactor = .5;
 		public static double fireExitEffect = .5; 		//0 assumes worst possible placement/utilization. 1 Assumes perfect placement and usage
 		public static double groupInefficiency = 1-.3;	//Accounts for human nature
@@ -29,17 +29,19 @@ namespace SNCompany {
 
 		//Currently these values are only for experimentation and facility. Some may need to be found experimentally
 		//Interior-dependent
-		public static double branchLengthIncreaseWithSize = 0;	//I don't believe DunGen does this. Left in for if an interior ever uses unique generation that requires it
+		public static double branchLengthIncreaseWithSize = 0;	//I don't believe vanilla DunGen does this. Left in for modded interiors with unique generation
 		public static double branchTime = 4.8; 			//Average dungeon time spent exploring branches while fully clearing dungeon size 1, without fire exits 
-		public static double mainPathTime = 2.41;		//Average dungeon time spent carrying items down main path 
+		public static double mainPathTime = 2.41;		//Average dungeon time spent carrying items down main path for dungeon size 1 with average scrap of 10. 
 		public static double interiorOffset = .24; 		//Portion of scrap contained in branches that directly connect to main entrance at dungeon size 1. (No main path traversal required) 
 		public static double interiorDifficulty = 1;	//Not used by default
 
+		//Moon-dependent
 		public static double moonDifficulty = 0;		//Not used by default
 		public static string moonName = string.Empty;
 		public static double shipToEntranceTravelTime;
 
-		public static int numPlayersAtTakeoff = 4;
+		public static double experimentationTravelTime;
+
 		public static double numPlayers;
 		public static double scrapValueRate;
 		public static double scrapObjectRate;
@@ -56,6 +58,7 @@ namespace SNCompany {
 		public static double efficiencyAdjusted;
 
 		public static string debug = string.Empty;
+		public static string grade = string.Empty;
 
         public static Dictionary<string, double> shipToEntranceTimes = new Dictionary<string, double>
             {
@@ -73,7 +76,20 @@ namespace SNCompany {
 				{"Embrion", 67},
 				{"Unknown", 54.79}
             };
-		public static double experimentationTravelTime;
+
+		public static Dictionary<string, int[]> grades = new Dictionary<string, int[]>
+			{
+				{"F", [0, 0, 0]},
+				{"D", [10, 15, 50]},
+				{"C", [40, 25, 100]},
+				{"B", [60, 50, 250]},
+				{"A", [80, 75, 400]},
+				{"S", [100, 90, 600]}
+			};
+		//Indexes for grades' arrays
+		static readonly int THRESHOLD = 0;
+		static readonly int PERCENTSUBSIDY = 1;
+		static readonly int AMOUNTSUBSIDY = 2;
 
 		static Grading() {
 			if(!shipToEntranceTimes.ContainsKey("Experimentation") || !shipToEntranceTimes.ContainsKey("Offense")) 
@@ -92,7 +108,7 @@ namespace SNCompany {
 			groupInefficiency = 1-Plugin.BoundConfig.groupInefficiency.Value;
 			fireExitEffect = Plugin.BoundConfig.fireExitEffect.Value;
 			
-			//S threshold values
+			//Runs efficiency calculation with the S threshold data, to determine constant k needed to reach the S threshold
 			numPlayers = 4;
 			dungeonSize = 1.2;
 			numOfFireExits = 1;
@@ -100,16 +116,13 @@ namespace SNCompany {
 			scrapObjectsCollected = 14;
 			totalScrapObjects = 14;
 			k = 1;
-
 			//interiorOffset =
 			//mainPathTime =
 			//branchTime =
 
-			LogGradingVariables();
 			efficiency = CalculateEfficiencyPerPlayer();
-			LogGradingCalculations();
-			k = 100/efficiency;
-			Plugin.Log.LogInfo($"Calculated k: {k}");
+			k = grades["S"][THRESHOLD]/efficiency;
+			Plugin.Log.LogDebug($"Calculated k: {k}");
 		}
 
 		public static void PrepareForEfficiencyCalculation(int scrapCollected) {
@@ -117,7 +130,7 @@ namespace SNCompany {
 			numPlayers = ((double)numPlayersAtTakeoff+(double)numPlayersAtLanding)/2;
 
 			moonName = new string(StartOfRound.Instance.currentLevel.PlanetName.SkipWhile((char c) => !char.IsLetter(c)).ToArray());
-			Plugin.Log.LogInfo($"Moon: {moonName}\n");
+			Plugin.Log.LogDebug($"Moon: {moonName}\n");
 			if (shipToEntranceTimes.ContainsKey(moonName)) shipToEntranceTravelTime = shipToEntranceTimes[moonName];
 			else shipToEntranceTravelTime = shipToEntranceTimes["Unknown"];
 
@@ -125,7 +138,6 @@ namespace SNCompany {
 			scrapValueRate = (double)scrapValueCollected / (double)RoundManager.Instance.totalScrapValueInLevel;
 			scrapObjectRate = (double) scrapObjectsCollected / (double)totalScrapObjects;
 			weightedClearRate = valueFactor*scrapValueRate+(1-valueFactor)*scrapObjectRate;
-
 			//interiorOffset =
 			//mainPathTime =
 			//branchTime =
@@ -155,20 +167,20 @@ namespace SNCompany {
 			debug += $"moonDifficulty: {moonDifficulty}\n";
             debug += $"interiorDifficulty: {interiorDifficulty}\n";
 			debug += $"constant k: {k}\n";
-			Plugin.Log.LogInfo(debug);
+			Plugin.Log.LogDebug(debug);
 		}
 
         public static double CalculateEfficiencyPerPlayer() {
             //Assumes all interiors are balanced to take an equal amount of time to clear at a dungeon size of 1.
-			// - If not true, users should restrict their dungeon sizes through LLL.
+			// - If not true, users should probably restrict their dungeon sizes through LLL's config.
 
 			//These equations result in an 'efficiency' (can be thought of as distance traveled or time spent) per player. The 3 "distance"
-			//equations simply establish the correct relationships between each one's relevant variables, and do not initially have well-defined 
+			//equations each establish the correct relationships between thier relevant variables, but do not initially have well-defined 
 			//units. A chosen set of conditions (fully clearing a facility interior on experimentation) is used to experimentally determine 
 			//constants. The main path, branch, and exterior distances are normalized by themselves with experimentation's moon-specific 
 			//values plugged in, then multiplied by these constants (average time spent on each kind of distance for experimentation)
 			//to obtain the experimentally determined balance between them, essentially hard-coding a starting point. 
-			//Beyond this point, the relationships established by the equations will alter the result appropriately.
+			//Beyond this point, as conditions change, the relationships established by the equations will alter the result appropriately.
 
 			totalDungeonClearedBranches = weightedClearRate*dungeonSize;
 			branchDistance = Math.Pow(totalDungeonClearedBranches,1+branchLengthIncreaseWithSize);
@@ -199,7 +211,24 @@ namespace SNCompany {
 			debug += $"totalDistanceCovered: {totalDistanceCovered}\n";
 			debug += $"efficiency: {efficiency}\n";
 			debug += $"efficiencyDifficultyAdjusted: {efficiencyAdjusted}\n";
-			Plugin.Log.LogInfo(debug);
+			Plugin.Log.LogDebug(debug);
+		}
+
+		public static void RewardEfficiency(double efficiency) {
+			if 		(efficiency >= grades["S"][THRESHOLD]) grade = "S";
+			else if (efficiency >= grades["A"][THRESHOLD]) grade = "A";
+			else if (efficiency >= grades["B"][THRESHOLD]) grade = "B";
+			else if (efficiency >= grades["C"][THRESHOLD]) grade = "C";
+			else if (efficiency >= grades["D"][THRESHOLD]) grade = "D";
+			else 										   grade = "F";
+            
+			Subsidy.percentSubsidy = grades[grade][PERCENTSUBSIDY];
+			Subsidy.amountSubsidy = grades[grade][AMOUNTSUBSIDY];
+			HUDManager.Instance.statsUIElements.gradeLetter.text = grade;
+			Plugin.Log.LogDebug($"Grade: {grade}");
+			Plugin.Log.LogDebug($"percentSubsidy set to: {Subsidy.percentSubsidy}");
+			Plugin.Log.LogDebug($"amountSubsidy set to: {Subsidy.amountSubsidy}");
+			Subsidy.SubsidizeAllMoons();
 		}
 
 		public static int FindNumOfFireExits()

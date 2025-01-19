@@ -6,7 +6,7 @@ using HarmonyLib;
 namespace SNCompany.Patches 
 {
 	[HarmonyPatch]
-	static class ReplaceLogo 
+	static class ReplaceLogoPatch 
 	{
 		[HarmonyPatch(typeof(MenuManager), "Awake")]
 		[HarmonyPostfix]

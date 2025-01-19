@@ -2,8 +2,9 @@ using HarmonyLib;
 
 namespace SNCompany.Patches 
 {
-[HarmonyPatch]
-	static class Penalties {
+	[HarmonyPatch]
+	static class PenaltyPatch 
+	{
 		[HarmonyPatch(typeof(HUDManager), "ApplyPenalty")]
 		[HarmonyPrefix]
 		public static bool RemovePenalty() {
