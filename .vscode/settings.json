@@ -3,5 +3,6 @@
         "Linq",
         "Newtonsoft",
         "Thunderstore"
-    ]
+    ],
+    "C_Cpp.errorSquiggles": "enabled"
 }

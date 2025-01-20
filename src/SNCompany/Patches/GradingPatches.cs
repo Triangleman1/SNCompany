@@ -6,11 +6,11 @@ namespace SNCompany.Patches
     [HarmonyPatch]
 	static class GradingPatches 
 	{
-		[HarmonyPatch(typeof(StartOfRound), "openingDoorsSequence")]
+		[HarmonyPatch(typeof(RoundManager), "FinishGeneratingNewLevelClientRpc")]
 		[HarmonyPostfix]
 		public static void SavePlayersAndFireExitsAtStart() 
 		{
-			Grading.numPlayersAtLanding = HUDManager.Instance.playersManager.livingPlayers;
+			Grading.numPlayersAtLanding = RoundManager.Instance.playersManager.connectedPlayersAmount + 1;
             Plugin.Log.LogDebug($"Number of players saved as {Grading.numPlayersAtLanding}");
 			Plugin.Log.LogDebug($"FindNumOfFireExitsPatch Running");
 			Grading.numOfFireExits = Grading.FindNumOfFireExits();

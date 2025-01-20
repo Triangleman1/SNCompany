@@ -7,15 +7,15 @@ namespace SNCompany {
 
     public static class Subsidy 
     {
+        //To-Do: Networking
+
         [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
         public static int percentSubsidy = 0;
         [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
         public static int amountSubsidy = 0;
         [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-        public static bool subsidized = false;
-        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
+        public static bool globalSubsidized = false;
         public static Dictionary<string, SNLevel> SNLevels = [];
-        public static int lastRoutePrice;
 
         public static int CalculateSubsidy(int moonPrice) 
         {
@@ -31,67 +31,53 @@ namespace SNCompany {
 
         public static void SubsidizeAllMoons() 
         {
-            if (!subsidized) 
+            if (globalSubsidized == true) 
             {
-                foreach (ExtendedLevel extendedLevel in PatchedContent.ExtendedLevels)
+                Plugin.Log.LogWarning("Tried to subsidize when already subsidized");
+                return;
+            }
+            foreach (var entry in Subsidy.SNLevels)
+            {
+                SNLevel snLevel = entry.Value;
+                ExtendedLevel extendedLevel = snLevel.extendedLevel;
+                string moonName = snLevel.moonName;
+                int basePrice = extendedLevel.RoutePrice;
+                int discount = CalculateSubsidy(basePrice);
+
+                if (!snLevel.subsidized) 
                 {
-                    SNLevel SNLevel;
-                    int basePrice = extendedLevel.RoutePrice;
-                    int discount = CalculateSubsidy(basePrice);
-                    string moonName = extendedLevel.SelectableLevel.sceneName;
-
-                    if (!SNLevels.ContainsKey(moonName))
-                    {
-                        Plugin.Log.LogError($"Subsidy: {moonName} was not registered into dictionary");
-                        return;
-                    }
-
-                    SNLevel = SNLevels[moonName];
-                    SNLevel.originalPrice = basePrice;
-                    SNLevel.subsidy = discount;
-                    Plugin.Log.LogDebug($"Subsidized {moonName}");
+                    snLevel.originalPrice = basePrice;
+                    snLevel.subsidy = discount;
+                    snLevel.subsidized = true;
                     extendedLevel.RoutePrice = basePrice-discount;
+
+                    Plugin.Log.LogDebug($"Subsidized {moonName}");
                 }
-                subsidized = true;
             }
+            globalSubsidized = true;
         }
 
-        public static void UnsubsidizeAllMoons() {
-            if (subsidized) {
-                foreach (ExtendedLevel extendedLevel in PatchedContent.ExtendedLevels)
-                {
-                    SNLevel SNLevel;
-                    string moonName = extendedLevel.SelectableLevel.sceneName;
-                    if (SNLevels.ContainsKey(moonName))
-                    {
-                        SNLevel = SNLevels[moonName];
-                        extendedLevel.RoutePrice = SNLevel.originalPrice;
-                        Plugin.Log.LogDebug($"Unsubsidized {moonName}");
-                    }
-                    else
-                    {
-                        Plugin.Log.LogDebug($"Could not unsubsidize {moonName}");
-                    }
-                }
-                subsidized = false;
-            }
-        }
-    }
-
-    public class SNLevel 
-    {
-        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-        public ExtendedLevel extendedLevel;
-        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-        public int originalPrice;
-        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-        public int subsidy;
-        //int x;
-        //int y;
-
-        public SNLevel(ExtendedLevel exLevel) 
+        public static void UnsubsidizeAllMoons() 
         {
-            extendedLevel = exLevel;
+            if (globalSubsidized == false) 
+            {
+                Plugin.Log.LogWarning("Tried to unsubsidize when not subsidized");
+            }
+            foreach (var entry in Subsidy.SNLevels)
+            {
+                SNLevel snLevel = entry.Value;
+                ExtendedLevel extendedLevel = snLevel.extendedLevel;
+                string moonName = snLevel.moonName;
+                
+                if (snLevel.subsidized == true) 
+                {
+                    extendedLevel.RoutePrice = snLevel.originalPrice;
+                    snLevel.subsidy = 0;
+                    snLevel.subsidized = false;
+                    Plugin.Log.LogDebug($"Unsubsidized {moonName}");
+                }
+            }
+            globalSubsidized = false;
         }
     }
 }
