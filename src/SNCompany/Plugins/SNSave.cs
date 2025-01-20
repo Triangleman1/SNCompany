@@ -19,7 +19,7 @@ namespace SNCompany
 
         public static void Save() {
             SNLevelSaves.Clear();
-            foreach (var entry in Subsidy.SNLevels)
+            foreach (var entry in SNLevelManager.SNLevels)
             {
                 SNLevel snLevel = entry.Value;
                 Level level = new Level();
@@ -32,7 +32,7 @@ namespace SNCompany
             }
         }
         public static void Load() {
-            Subsidy.SNLevels.Clear();
+            SNLevelManager.SNLevels.Clear();
             foreach (ExtendedLevel extendedLevel in PatchedContent.ExtendedLevels)
             {
                 string moonName = extendedLevel.SelectableLevel.sceneName;
@@ -52,7 +52,7 @@ namespace SNCompany
                     //snLevel.subsidized = false;
                 }
                 snLevel.subsidized = false;
-                Subsidy.SNLevels.Add(snLevel.moonName, snLevel);
+                SNLevelManager.SNLevels.Add(snLevel.moonName, snLevel);
             }
         }
     }

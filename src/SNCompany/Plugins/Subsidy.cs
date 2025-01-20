@@ -15,7 +15,6 @@ namespace SNCompany {
         public static int amountSubsidy = 0;
         [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
         public static bool globalSubsidized = false;
-        public static Dictionary<string, SNLevel> SNLevels = [];
 
         public static int CalculateSubsidy(int moonPrice) 
         {
@@ -36,7 +35,7 @@ namespace SNCompany {
                 Plugin.Log.LogWarning("Tried to subsidize when already subsidized");
                 return;
             }
-            foreach (var entry in Subsidy.SNLevels)
+            foreach (var entry in SNLevelManager.SNLevels)
             {
                 SNLevel snLevel = entry.Value;
                 ExtendedLevel extendedLevel = snLevel.extendedLevel;
@@ -63,7 +62,7 @@ namespace SNCompany {
             {
                 Plugin.Log.LogWarning("Tried to unsubsidize when not subsidized");
             }
-            foreach (var entry in Subsidy.SNLevels)
+            foreach (var entry in SNLevelManager.SNLevels)
             {
                 SNLevel snLevel = entry.Value;
                 ExtendedLevel extendedLevel = snLevel.extendedLevel;

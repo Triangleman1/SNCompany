@@ -1,5 +1,15 @@
 # SNCompany Changelog
 
+## 1.3.0
+- Subsidies added
+  - Depending on your letter grade performance, the company will take a percentage off your routing for a day, up on an (also performance-based) maximum threshold. Designed for dynamic pricing routing systems.
+  - It is now most cost effective to move between moons throughout your quota, particularly in an outward fashion.
+  - More moon variety per session
+  - Increasing difficulty throughout quota
+  - More pressure on all days: failure on the early days will limit how far out into the solar system you go, while failure on later days will occur on the most profitable moons of the quota (One bad day out of three will lower overall yield by more than 33%).
+  - Greater routing freedom in the late-game. Will face less weathers. Can move between nearby moons at extremely low cost.
+  - All benefits depend on your continual success
+
 ## 1.2.0
 - Grading algorithm improvements
   - Finds the number of fire exits, lowers dungeon size accordingly

@@ -1,8 +1,11 @@
 # SNCompany
 
-Personal tweaks and prototypes:
-
-Fines are removed. Replaced by a gentle chiding.
+The company will now subsidize your routing daily, depending on how well you clear the facility. A higher letter grade corresponds to a greater percentage off from routing, up to a maximum (that also increases with grade). Works best with dynamic pricing.
+  - It is now most cost effective to move between moons throughout your quota, particularly in an outward fashion.
+  - More moon variety per session
+  - Increasing difficulty throughout quota
+  - More pressure on all days: failure on the early days will limit how far out into the solar system you go, while failure on later days will occur on the most profitable moons of the quota (One bad day out of three will lower overall yield by more than 33%).
+  - Greater routing freedom in the late-game. Will face less weathers. Can move between nearby moons at extremely low cost.
 
 New grading algorithm properly represents player effort and efficiency.
 It takes into account:
@@ -13,6 +16,10 @@ It takes into account:
   - Traversal time across each vanilla moon
 
 With more players at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense/march is the S threshold I balanced for.
+
+Fines are removed. Replaced by a gentle chiding.
+
+Configurable.
 
 # Contact
 

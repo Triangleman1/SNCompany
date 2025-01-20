@@ -11,11 +11,9 @@ namespace SNCompany.Patches
         [HarmonyPriority(100)]
 		[HarmonyPatch(typeof(StartOfRound), "Start")]
 		[HarmonyPostfix]
-        public static void InitializeLevels() 
+        public static void Initialize() 
         {
-            SNSave.Load();
-            Subsidy.globalSubsidized = false;
-            Subsidy.SubsidizeAllMoons();
+            SNLevelManager.InitializeLevels();
         }
 
         [HarmonyPatch(typeof(RoundManager), "FinishGeneratingNewLevelClientRpc")]
@@ -40,7 +38,7 @@ namespace SNCompany.Patches
 		public static void AdjustSubsidies(int levelID) 
         { 
             SNLevel SNLevel;
-            foreach (var entry in Subsidy.SNLevels) 
+            foreach (var entry in SNLevelManager.SNLevels) 
             {
                 SNLevel = entry.Value;
                 if (SNLevel.extendedLevel.SelectableLevel.levelID == levelID) 

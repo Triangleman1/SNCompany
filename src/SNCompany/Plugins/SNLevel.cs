@@ -1,6 +1,5 @@
+using System.Collections.Generic;
 using LethalLevelLoader;
-using LethalModDataLib.Attributes;
-using LethalModDataLib.Enums;
 
 namespace SNCompany {
     public class SNLevel 
@@ -17,6 +16,18 @@ namespace SNCompany {
         {
             extendedLevel = exLevel;
             moonName = exLevel.SelectableLevel.sceneName;
+        }
+    }
+
+    public class SNLevelManager
+    {
+        public static Dictionary<string, SNLevel> SNLevels = [];
+
+        public static void InitializeLevels() 
+        {
+            SNSave.Load();
+            Subsidy.globalSubsidized = false;
+            Subsidy.SubsidizeAllMoons();
         }
     }
 }
