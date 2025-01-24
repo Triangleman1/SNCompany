@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <!-- 
       These were automatically generated for you by the template.
@@ -10,12 +12,12 @@
     -->
     <AssemblyName>com.github.triangleman.sncompany</AssemblyName>
     <Authors>Triangleman</Authors>
-    <Description>Makes grading algorithm significantly more advanced, now measuring time efficiency per player. Removed fines. Configurable.</Description>
+    <Description>Subsidized moon routing prices, based on daily performance. Makes grading algorithm significantly more advanced (and more fair).</Description>
     <Product>SNCompany</Product>
     <!--
       Except this, you should keep this up to date with your publishing tags.
     -->
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
 
     <!-- 
       You shouldn't have to change these, but you could if you wanted to.
@@ -24,6 +26,10 @@
     <RootNamespace>$(Product)</RootNamespace>
     <TargetName>$(Product)</TargetName>
   </PropertyGroup>
+
+  <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
+    <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')"/>
+  </Target>
 
   <!--
     Don't mess with anything below this line, it is required to build via 
@@ -44,18 +50,22 @@
       Include="BepInEx.Core"
       Version="5.4.*"
     />
+    <PackageReference 
+      Include="BepInEx.PluginInfoProps" 
+      Version="1.*" 
+    />
+    <PackageReference 
+      Include="UnityEngine.Modules" 
+      Version="2022.3.9" 
+      IncludeAssets="compile" 
+    />
     <PackageReference
       Include="LethalCompany.GameLibs.Steam"
       Version="67.0.0-ngd.0"
+      Publicize="true" 
+      PrivateAssets="all"
     />
-    <PackageReference 
-      Include="IAmBatby.LethalLevelLoader" 
-      Version="1.4.0" 
-    />
-    <PackageReference 
-      Include="MaxWasUnavailable.LethalModDataLib" 
-      Version="1.2.2" 
-    />
+
     <!--
       When adding additional references, ensure you use <Private>false</Private> to
       ensure the DLL is explicitly NOT copied to the output directory. This is because
@@ -66,7 +76,27 @@
       game when your mod is loaded.
 
       Example: <Reference Include="Assembly-CSharp.dll" Private="false" />
+      
     -->
+    <PackageReference 
+      Include="IAmBatby.LethalLevelLoader" 
+      Version="1.4.0"
+      Private="false" 
+    />
+    <PackageReference 
+      Include="MaxWasUnavailable.LethalModDataLib" 
+      Version="1.2.2" 
+      Private="false" 
+    />
+    <PackageReference
+      Include="BepInEx.AssemblyPublicizer.MSBuild" 
+      Version="0.4.1" 
+      PrivateAssets="all"
+      Private="false" 
+    >
+    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    
   </ItemGroup>
 
 </Project>

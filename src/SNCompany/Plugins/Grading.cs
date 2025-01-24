@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SNCompany {
 	//TODO: Make exterior objects only count towards value
-	//TODO: StemBranch and interiorOffset for each interior
+	//TODO: Time distributions for each interior
 	//TODO: Scaling with moon difficulty (will not be default)
 	//TODO: + and - Grades
     public static class Grading 
@@ -215,19 +214,16 @@ namespace SNCompany {
 		}
 
 		public static void RewardEfficiency(double efficiency) {
-			if 		(efficiency >= grades["S"][THRESHOLD]) grade = "S";
+			if (efficiency >= grades["S"][THRESHOLD]) grade = "S";
 			else if (efficiency >= grades["A"][THRESHOLD]) grade = "A";
 			else if (efficiency >= grades["B"][THRESHOLD]) grade = "B";
 			else if (efficiency >= grades["C"][THRESHOLD]) grade = "C";
 			else if (efficiency >= grades["D"][THRESHOLD]) grade = "D";
-			else 										   grade = "F";
+			else grade = "F";
             
-			Subsidy.percentSubsidy = grades[grade][PERCENTSUBSIDY];
-			Subsidy.amountSubsidy = grades[grade][AMOUNTSUBSIDY];
+			Subsidy.SetSubsidyParameters(grades[grade][PERCENTSUBSIDY], grades[grade][AMOUNTSUBSIDY]);
 			HUDManager.Instance.statsUIElements.gradeLetter.text = grade;
 			Plugin.Log.LogDebug($"Grade: {grade}");
-			Plugin.Log.LogDebug($"percentSubsidy set to: {Subsidy.percentSubsidy}");
-			Plugin.Log.LogDebug($"amountSubsidy set to: {Subsidy.amountSubsidy}");
 			Subsidy.SubsidizeAllMoons();
 		}
 

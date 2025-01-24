@@ -1,13 +1,46 @@
 using HarmonyLib;
-using System.Linq;
-using LethalLevelLoader;
-using LethalModDataLib.Features;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace SNCompany.Patches 
 {
     [HarmonyPatch]
 	static class SubsidyPatches 
     {
+        [HarmonyPatch(typeof(GameNetworkManager), "Start")]
+		[HarmonyPrefix]
+		[HarmonyPriority(150)]
+        public static void Networking(GameNetworkManager __instance) {
+            //GameObject subsidyPrefab = Subsidy.SetUpNetworking();
+            //__instance.GetComponent<NetworkManager>().AddNetworkPrefab(subsidyPrefab);
+            Subsidy.SetUpNetworking();
+        }
+
+        [HarmonyPrefix, HarmonyPatch(typeof(StartOfRound), nameof(StartOfRound.Awake))]
+        static void SpawnNetworkHandler()
+        {
+            if(NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer) 
+            {
+                if (SubsidyNetworkHandler.subsidyObject == null)
+                {
+                    Plugin.Log.LogError("Subsidy Networking GameObject is null. Cannot instantiate");
+                }
+                else if (SubsidyNetworkHandler.subsidyObject.GetComponent<NetworkObject>() == null)
+                {
+                    Plugin.Log.LogError("Subsidy Networking NetworkObject is null. Cannot instantiate");
+                }
+                else
+                {
+                    Plugin.Log.LogDebug($"Instantiating SubsidyNetworkHandler");
+                    GameObject go = Object.Instantiate(SubsidyNetworkHandler.subsidyObject);
+                    Plugin.Log.LogDebug($"Spawning NetworkObject");
+                    go.GetComponent<NetworkObject>().Spawn(false);
+                    Plugin.Log.LogDebug($"Instantiated SubsidyNetworkHandler");
+                }
+            }
+        }
+
+
         [HarmonyPriority(100)]
 		[HarmonyPatch(typeof(StartOfRound), "Start")]
 		[HarmonyPostfix]
@@ -37,18 +70,21 @@ namespace SNCompany.Patches
         [HarmonyPriority(-100)]
 		public static void AdjustSubsidies(int levelID) 
         { 
-            SNLevel SNLevel;
+            SNLevel snLevel;
             foreach (var entry in SNLevelManager.SNLevels) 
             {
-                SNLevel = entry.Value;
-                if (SNLevel.extendedLevel.SelectableLevel.levelID == levelID) 
+                snLevel = entry.Value;
+                if (snLevel.extendedLevel.SelectableLevel.levelID == levelID) 
                 {
-                    Plugin.Log.LogDebug($"Routed to {SNLevel.extendedLevel.SelectableLevel.sceneName}. Calculating remaining subsidy.");
-                    if (SNLevel.subsidy == -1) {
+                    Plugin.Log.LogDebug($"Routed to {snLevel.extendedLevel.SelectableLevel.sceneName}. Calculating remaining subsidy.");
+                    if (snLevel.subsidy == -1) {
                         Plugin.Log.LogError($"Last routed planet had no stored subsidy. Cannot resubsidize.");
                         return;
                     }
-                    Subsidy.amountSubsidy -= SNLevel.subsidy;
+                    Plugin.Log.LogDebug($"maxSubsidy: {SubsidyNetworkHandler.amountSubsidy.Value}");
+                    Plugin.Log.LogDebug($"Previous subsidy: {snLevel.subsidy}");
+                    SubsidyNetworkHandler.amountSubsidy.Value -= snLevel.subsidy;
+                    Plugin.Log.LogDebug($"New maxSubsidy: {SubsidyNetworkHandler.amountSubsidy.Value}");
 			        Subsidy.SubsidizeAllMoons();
                     break;
                 }

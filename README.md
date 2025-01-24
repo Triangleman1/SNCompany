@@ -1,27 +1,38 @@
 # SNCompany
+This is basically going to hold all of my modding projects, for my convenience. Once each is ready they'll be split off under separate labels. I'm building towards a major routing overhaul, piece by piece.
 
-The company will now subsidize your routing daily, depending on how well you clear the facility. A higher letter grade corresponds to a greater percentage off from routing, up to a maximum (that also increases with grade). Works best with dynamic pricing.
+## Subsidies
+The company will now lower routing costs based on how well you clear the facility each day. A higher letter grade corresponds to a greater percentage off from routing, up to a maximum off (that also increases with grade). Works best with dynamic pricing.
   - It is now most cost effective to move between moons throughout your quota, particularly in an outward fashion.
-  - More moon variety per session
-  - Increasing difficulty throughout quota
-  - More pressure on all days: failure on the early days will limit how far out into the solar system you go, while failure on later days will occur on the most profitable moons of the quota (One bad day out of three will lower overall yield by more than 33%).
-  - Greater routing freedom in the late-game. Will face less weathers. Can move between nearby moons at extremely low cost.
+    - More moon variety per session
+    - Increasing difficulty throughout quota
+  - Greater routing freedom in the late-game. 
+    - Will face less weathers. 
+    - Can move between nearby moons at low cost.
+  - More pressure on all days 
+    - Failure on the early days will limit how far out into the solar system you go
+    - Failure on later days will occur on the most profitable moons of the quota
+    - (One bad day out of three will lower overall yield by much more than 33%)
 
+## Grading
 New grading algorithm properly represents player effort and efficiency.
 It takes into account:
   - Dungeon Size, and the exponential time increase of exploring larger dungeons
   - Players connected
   - Quantity of scrap recovered, rather than just quality
-  - Fire exits
+  - Number of Fire exits
   - Traversal time across each vanilla moon
 
-With more players at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense/march is the S threshold I balanced for.
+With more players pr at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense/march is the S threshold it automatically balances for.
 
+## Misc
 Fines are removed. Replaced by a gentle chiding.
+
+Optional vandalism of main logo.
 
 Configurable.
 
-# Contact
+## Contact
 
 Discord: triangleman10 
 

@@ -1,7 +1,12 @@
-using System.Collections.Generic;
+using System;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using LethalLevelLoader;
 using LethalModDataLib.Attributes;
 using LethalModDataLib.Enums;
+using Unity.Netcode;
+using UnityEngine;
 
 namespace SNCompany {
 
@@ -9,23 +14,33 @@ namespace SNCompany {
     {
         //To-Do: Networking
 
+        /*
         [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
         public static int percentSubsidy = 0;
         [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
         public static int amountSubsidy = 0;
-        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
+        */
         public static bool globalSubsidized = false;
 
-        public static int CalculateSubsidy(int moonPrice) 
+        public static void SetUpNetworking()
         {
-            int discount;
-            if (moonPrice == 0) return 0;
-            discount = (int)(moonPrice*((double)percentSubsidy/100));
-            if (discount > amountSubsidy) discount = amountSubsidy;
-            if (discount > moonPrice) discount = moonPrice;
-            Plugin.Log.LogDebug($"Subsidy: {moonPrice}-{discount}={moonPrice-discount}");
-
-            return discount;
+            SubsidyNetworkHandler.subsidyObject = NetworkPrefab.GeneratePrefab("SubsidyNetworkHandler");
+            SubsidyNetworkHandler.subsidyObject.AddComponent<SubsidyNetworkHandler>();
+            if (!NetworkManager.Singleton.NetworkConfig.Prefabs.Contains(SubsidyNetworkHandler.subsidyObject))
+            {
+                NetworkManager.Singleton.AddNetworkPrefab(SubsidyNetworkHandler.subsidyObject);
+            }
+            Plugin.Log.LogDebug("Set up and registered Subsidy's Networking GameObject");
+        }
+        
+        public static void SetSubsidyParameters(int percent, int amount)
+        {
+            //Subsidy.onlyHostSync = true;
+            SubsidyNetworkHandler.percentSubsidy.Value = percent;
+            SubsidyNetworkHandler.amountSubsidy.Value = amount;
+            //Subsidy.onlyHostSync = false;
+            Plugin.Log.LogDebug($"percentSubsidy set to: {SubsidyNetworkHandler.percentSubsidy.Value}");
+			Plugin.Log.LogDebug($"amountSubsidy set to: {SubsidyNetworkHandler.amountSubsidy.Value}");
         }
 
         public static void SubsidizeAllMoons() 
@@ -56,6 +71,18 @@ namespace SNCompany {
             globalSubsidized = true;
         }
 
+        public static int CalculateSubsidy(int moonPrice) 
+        {
+            int discount;
+            if (moonPrice == 0) return 0;
+            discount = (int)(moonPrice*((double)SubsidyNetworkHandler.percentSubsidy.Value/100));
+            if (discount > SubsidyNetworkHandler.amountSubsidy.Value) discount = SubsidyNetworkHandler.amountSubsidy.Value;
+            if (discount > moonPrice) discount = moonPrice;
+            Plugin.Log.LogDebug($"Subsidy: {moonPrice}-{discount}={moonPrice-discount}");
+
+            return discount;
+        }
+
         public static void UnsubsidizeAllMoons() 
         {
             if (globalSubsidized == false) 
@@ -71,8 +98,8 @@ namespace SNCompany {
                 if (snLevel.subsidized == true) 
                 {
                     extendedLevel.RoutePrice = snLevel.originalPrice;
-                    snLevel.subsidy = 0;
                     snLevel.subsidized = false;
+                    //Remember: snLevel.subsidy keeps its stored value, even after unsubsidization
                     Plugin.Log.LogDebug($"Unsubsidized {moonName}");
                 }
             }

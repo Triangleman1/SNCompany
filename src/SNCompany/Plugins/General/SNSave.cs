@@ -7,8 +7,12 @@ namespace SNCompany
 {
     public static class SNSave
     {
-        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)] //ERROR
+        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
         public static Dictionary<string, Level> SNLevelSaves = new Dictionary<string, Level>();
+        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
+        public static int amountSubsidySaved;
+        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
+        public static int percentSubsidySaved;
 
         public struct Level {
             public string moonName;
@@ -21,16 +25,28 @@ namespace SNCompany
             SNLevelSaves.Clear();
             foreach (var entry in SNLevelManager.SNLevels)
             {
+                //General
                 SNLevel snLevel = entry.Value;
                 Level level = new Level();
                 level.moonName = snLevel.moonName;
+                
+                //Subsidies
                 level.originalPrice = snLevel.originalPrice;
                 level.subsidy = snLevel.subsidy;
                 level.subsidized = snLevel.subsidized;
+                
+                //Position
+                //level.x = snLevel.x
+                //level.y = snLevel.y
+
                 SNLevelSaves.Add(level.moonName, level);
                 Plugin.Log.LogDebug($"Saved {SNLevelSaves[level.moonName].moonName}");
             }
+            //Subsidies
+            //amountSubsidySaved = SubsidyNetworkHandler.amountSubsidy.Value;
+            //percentSubsidySaved = SubsidyNetworkHandler.percentSubsidy.Value;
         }
+
         public static void Load() {
             SNLevelManager.SNLevels.Clear();
             foreach (ExtendedLevel extendedLevel in PatchedContent.ExtendedLevels)
@@ -41,19 +57,23 @@ namespace SNCompany
                 if (SNLevelSaves.ContainsKey(moonName)) {
                     Plugin.Log.LogDebug($"Save Dictionary contains {moonName}");
                     Level level = SNLevelSaves[moonName];
+                    
+                    //Subsidies
                     snLevel.originalPrice = level.originalPrice;
                     snLevel.subsidy = level.subsidy;
-                    //snLevel.subsidized = level.subsidized;
                 }
                 else {
                     Plugin.Log.LogDebug($"Save Dictionary lacked {moonName}");
+                    
+                    //Subsidies
                     snLevel.originalPrice = extendedLevel.RoutePrice;
                     snLevel.subsidy = -1;
-                    //snLevel.subsidized = false;
                 }
                 snLevel.subsidized = false;
                 SNLevelManager.SNLevels.Add(snLevel.moonName, snLevel);
             }
+            //Subsidy.subsidyNetworkHandler.amountSubsidy.Value = amountSubsidySaved;//hs
+            //Subsidy.subsidyNetworkHandler.percentSubsidy.Value = percentSubsidySaved;//hs
         }
     }
 }

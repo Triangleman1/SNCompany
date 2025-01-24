@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using LethalLevelLoader;
+using LethalModDataLib.Attributes;
+using LethalModDataLib.Enums;
+using Unity.Netcode;
 
 namespace SNCompany {
     public class SNLevel 
@@ -19,10 +22,9 @@ namespace SNCompany {
         }
     }
 
-    public class SNLevelManager
+    public static class SNLevelManager
     {
         public static Dictionary<string, SNLevel> SNLevels = [];
-
         public static void InitializeLevels() 
         {
             SNSave.Load();

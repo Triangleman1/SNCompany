@@ -8,6 +8,12 @@
         "resolved": "1.0.8",
         "contentHash": "xrfNmunsPhBx+vStTxLonq/aHkRrDH77c9tG/x3m5eejrKe5B0nf7cJPRRt6x330sGI0bLaPTtygdeHUgvI3wQ=="
       },
+      "BepInEx.AssemblyPublicizer.MSBuild": {
+        "type": "Direct",
+        "requested": "[0.4.1, )",
+        "resolved": "0.4.1",
+        "contentHash": "bbTaXa0CKDuap0vDR+NkSz9crQIYhMvIbId9njUajYZAcr8OTuVcyiSlexzeGxfkYAbbn0z9YpgbIoeyHADXqA=="
+      },
       "BepInEx.Core": {
         "type": "Direct",
         "requested": "[5.4.*, )",
@@ -17,6 +23,12 @@
           "BepInEx.BaseLib": "5.4.20",
           "HarmonyX": "2.7.0"
         }
+      },
+      "BepInEx.PluginInfoProps": {
+        "type": "Direct",
+        "requested": "[1.*, )",
+        "resolved": "1.1.0",
+        "contentHash": "RqM3aaGs8Hc2m0D+8aSt9mv09rCMYNIF35NB3D6KA2zSpcXJh/9ZVWrPlIUJfA8KYzodSWcCMUexEW24fjwR3w=="
       },
       "IAmBatby.LethalLevelLoader": {
         "type": "Direct",
@@ -51,15 +63,16 @@
           "UnityEngine.Modules": "2022.3.9"
         }
       },
+      "UnityEngine.Modules": {
+        "type": "Direct",
+        "requested": "[2022.3.9, )",
+        "resolved": "2022.3.9",
+        "contentHash": "sSxqZjd05U0NWlX+eappdlsEuXFvDRHkUaClDVTocGRzCmIwNvgGJIPh22lGklIpNZ3cJZneYJkIUnEIazR8VA=="
+      },
       "BepInEx.BaseLib": {
         "type": "Transitive",
         "resolved": "5.4.20",
         "contentHash": "0bXgYxbCEN2Ixp3kiFEhyw+RASeFQeg/ww+lbMt7if6XMeVS60eg6epNsMA8Jbx57dmNOzNevkKKw8mP8SUMqw=="
-      },
-      "BepInEx.PluginInfoProps": {
-        "type": "Transitive",
-        "resolved": "1.1.0",
-        "contentHash": "RqM3aaGs8Hc2m0D+8aSt9mv09rCMYNIF35NB3D6KA2zSpcXJh/9ZVWrPlIUJfA8KYzodSWcCMUexEW24fjwR3w=="
       },
       "Evaisa.LethalLib": {
         "type": "Transitive",
@@ -404,11 +417,6 @@
           "Microsoft.NETCore.Targets": "1.1.0",
           "System.Runtime": "4.3.0"
         }
-      },
-      "UnityEngine.Modules": {
-        "type": "Transitive",
-        "resolved": "2022.3.9",
-        "contentHash": "sSxqZjd05U0NWlX+eappdlsEuXFvDRHkUaClDVTocGRzCmIwNvgGJIPh22lGklIpNZ3cJZneYJkIUnEIazR8VA=="
       }
     }
   }
