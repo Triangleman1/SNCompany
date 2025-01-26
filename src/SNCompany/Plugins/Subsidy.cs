@@ -12,14 +12,7 @@ namespace SNCompany {
 
     public static class Subsidy 
     {
-        //To-Do: Networking
-
-        /*
         [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-        public static int percentSubsidy = 0;
-        [ModData(SaveWhen.OnSave, LoadWhen.OnLoad, SaveLocation.CurrentSave)]
-        public static int amountSubsidy = 0;
-        */
         public static bool globalSubsidized = false;
 
         public static void SetUpNetworking()
@@ -30,24 +23,14 @@ namespace SNCompany {
             {
                 NetworkManager.Singleton.AddNetworkPrefab(SubsidyNetworkHandler.subsidyObject);
             }
-            Plugin.Log.LogDebug("Set up and registered Subsidy's Networking GameObject");
-        }
-        
-        public static void SetSubsidyParameters(int percent, int amount)
-        {
-            //Subsidy.onlyHostSync = true;
-            SubsidyNetworkHandler.percentSubsidy.Value = percent;
-            SubsidyNetworkHandler.amountSubsidy.Value = amount;
-            //Subsidy.onlyHostSync = false;
-            Plugin.Log.LogDebug($"percentSubsidy set to: {SubsidyNetworkHandler.percentSubsidy.Value}");
-			Plugin.Log.LogDebug($"amountSubsidy set to: {SubsidyNetworkHandler.amountSubsidy.Value}");
+            Plugin.Log.LogDebug($"Set up and registered Subsidy's Networking GameObject");
         }
 
         public static void SubsidizeAllMoons() 
         {
             if (globalSubsidized == true) 
             {
-                Plugin.Log.LogWarning("Tried to subsidize when already subsidized");
+                Plugin.Log.LogWarning($"{SubsidyNetworkHandler.WhoAmI()}: Tried to subsidize when already subsidized");
                 return;
             }
             foreach (var entry in SNLevelManager.SNLevels)
@@ -65,7 +48,7 @@ namespace SNCompany {
                     snLevel.subsidized = true;
                     extendedLevel.RoutePrice = basePrice-discount;
 
-                    Plugin.Log.LogDebug($"Subsidized {moonName}");
+                    Plugin.Log.LogDebug($"{SubsidyNetworkHandler.WhoAmI()}: Subsidized {moonName}");
                 }
             }
             globalSubsidized = true;
@@ -78,7 +61,7 @@ namespace SNCompany {
             discount = (int)(moonPrice*((double)SubsidyNetworkHandler.percentSubsidy.Value/100));
             if (discount > SubsidyNetworkHandler.amountSubsidy.Value) discount = SubsidyNetworkHandler.amountSubsidy.Value;
             if (discount > moonPrice) discount = moonPrice;
-            Plugin.Log.LogDebug($"Subsidy: {moonPrice}-{discount}={moonPrice-discount}");
+            Plugin.Log.LogDebug($"{SubsidyNetworkHandler.WhoAmI()}: Subsidy: {moonPrice}-{discount}={moonPrice-discount}");
 
             return discount;
         }
@@ -87,7 +70,7 @@ namespace SNCompany {
         {
             if (globalSubsidized == false) 
             {
-                Plugin.Log.LogWarning("Tried to unsubsidize when not subsidized");
+                Plugin.Log.LogWarning($"{SubsidyNetworkHandler.WhoAmI()}: Tried to unsubsidize when not subsidized");
             }
             foreach (var entry in SNLevelManager.SNLevels)
             {
@@ -99,8 +82,8 @@ namespace SNCompany {
                 {
                     extendedLevel.RoutePrice = snLevel.originalPrice;
                     snLevel.subsidized = false;
-                    //Remember: snLevel.subsidy keeps its stored value, even after unsubsidization
-                    Plugin.Log.LogDebug($"Unsubsidized {moonName}");
+                    //snLevel.subsidy keeps its stored value, even after unsubsidization
+                    Plugin.Log.LogDebug($"{SubsidyNetworkHandler.WhoAmI()}: Unsubsidized {moonName}");
                 }
             }
             globalSubsidized = false;

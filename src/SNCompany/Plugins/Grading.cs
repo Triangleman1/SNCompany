@@ -121,7 +121,7 @@ namespace SNCompany {
 
 			efficiency = CalculateEfficiencyPerPlayer();
 			k = grades["S"][THRESHOLD]/efficiency;
-			Plugin.Log.LogDebug($"Calculated k: {k}");
+			Plugin.Log.LogDebug($"{SubsidyNetworkHandler.WhoAmI()}: Calculated k: {k}");
 		}
 
 		public static void PrepareForEfficiencyCalculation(int scrapCollected) {
@@ -143,7 +143,7 @@ namespace SNCompany {
 		}
 
 		public static void LogGradingVariables() {
-			debug = $"\ndungeonSize: {dungeonSize}\n";
+			debug = $"{SubsidyNetworkHandler.WhoAmI()}: \ndungeonSize: {dungeonSize}\n";
 			debug += $"numofFireExits: {numOfFireExits}\n";
 			debug += $"numPlayersAtTakeoff: {numPlayersAtTakeoff}\n";
 			debug += $"numPlayersAtLanding: {numPlayersAtLanding}\n";
@@ -221,10 +221,10 @@ namespace SNCompany {
 			else if (efficiency >= grades["D"][THRESHOLD]) grade = "D";
 			else grade = "F";
             
-			Subsidy.SetSubsidyParameters(grades[grade][PERCENTSUBSIDY], grades[grade][AMOUNTSUBSIDY]);
+			SubsidyNetworkHandler.Instance.SetSubsidyParameters(grades[grade][PERCENTSUBSIDY], grades[grade][AMOUNTSUBSIDY]);
 			HUDManager.Instance.statsUIElements.gradeLetter.text = grade;
-			Plugin.Log.LogDebug($"Grade: {grade}");
-			Subsidy.SubsidizeAllMoons();
+			Plugin.Log.LogDebug($"{SubsidyNetworkHandler.WhoAmI()}: Grade: {grade}");
+			//Subsidy.SubsidizeAllMoons(grades[grade][PERCENTSUBSIDY], grades[grade][AMOUNTSUBSIDY]);
 		}
 
 		public static int FindNumOfFireExits()

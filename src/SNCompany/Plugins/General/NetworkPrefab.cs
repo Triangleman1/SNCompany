@@ -23,7 +23,7 @@ namespace SNCompany {
 			snPrefab.hideFlags = (HideFlags)61;
 			snPrefab.transform.SetParent(prefabParent.Value.transform);
             snPrefab.AddComponent<NetworkObject>();
-            byte[] value = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(Assembly.GetCallingAssembly().GetName().Name + "SubsidyNetworkHandler"));
+            byte[] value = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(Assembly.GetCallingAssembly().GetName().Name + name));
 			snPrefab.GetComponent<NetworkObject>().GlobalObjectIdHash = BitConverter.ToUInt32(value, 0);
 			//subsidyPrefab.AddComponent<SubsidyNetworkHandler>();
             snPrefab.GetComponent<NetworkObject>().SceneMigrationSynchronization = true;

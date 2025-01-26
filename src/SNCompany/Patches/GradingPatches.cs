@@ -12,9 +12,12 @@ namespace SNCompany.Patches
 		{
 			Grading.numPlayersAtLanding = RoundManager.Instance.playersManager.connectedPlayersAmount + 1;
             Plugin.Log.LogDebug($"Number of players saved as {Grading.numPlayersAtLanding}");
-			Plugin.Log.LogDebug($"FindNumOfFireExitsPatch Running");
-			Grading.numOfFireExits = Grading.FindNumOfFireExits();
-            Plugin.Log.LogDebug($"Number of fire exits saved as {Grading.numOfFireExits}");
+			if (SNNetworkHandler.Instance.IsServer)
+			{
+				Plugin.Log.LogDebug($"FindNumOfFireExitsPatch Running");
+				Grading.numOfFireExits = Grading.FindNumOfFireExits();
+            	Plugin.Log.LogDebug($"Number of fire exits saved as {Grading.numOfFireExits}");
+			}
 		}
 
         [HarmonyPatch(typeof(RoundManager), "GenerateNewFloor")]
@@ -35,6 +38,16 @@ namespace SNCompany.Patches
             Plugin.Log.LogDebug($"Scrap Quantity saved as {Grading.totalScrapObjects}");
 		}
 
+		[HarmonyPatch(typeof(StartOfRound), "EndGameServerRpc")]
+		[HarmonyPostfix]
+		public static void SyncFireExits()
+		{
+			if (SNNetworkHandler.Instance.IsServer) 
+			{
+				SNNetworkHandler.Instance.SyncFireExitClientRpc(Grading.numOfFireExits);
+			}
+		}
+		
 		[HarmonyPatch(typeof(StartOfRound), "EndOfGameClientRpc")]
 		[HarmonyPrefix]
 		public static void SaveCollectedScrapAmount() 
