@@ -1,13 +1,16 @@
 # SNCompany Changelog
 
 ## 1.3.0
-Subsidies added. Depending on your letter grade performance, the company will take a percentage off your routing for a day, up on an (also performance-based) maximum threshold. Designed for dynamic pricing routing systems.
+Subsidies added. Depending on your letter grade performance, the company will take a percentage off your routing for a day, up to an (also performance-based) maximum threshold. Designed for dynamic pricing routing systems.
   - It is now most cost effective to move between moons throughout your quota, particularly in an outward fashion.
     - More moon variety per session
     - Increasing difficulty throughout quota
   - More pressure on all days: failure on the early days will limit how far out into the solar system you go, while failure on later days will occur on the most profitable moons of the quota (One bad day out of three will lower overall yield by more than 33%).
   - Greater routing freedom in the late-game. Will face less weathers. Can move between nearby moons at low cost.
   - All benefits depend on your continual success
+
+Grading
+  - Fixed desync with # of fire exits between server and clients, which was resulting in players seeing different grades
 
 ## 1.2.0
 - Grading algorithm improvements
@@ -32,7 +35,7 @@ Revamped grading algorithm to better represent player effort and efficiency
   - Player Number (at start and end of each round)
   - Quantity of scrap recovered (weighted average with scrap value)
     - This lowers the effect of extremely high value scrap, like sellbodies corpses and the facility meltdown apparatus
-- With more players at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense is the S threshold I balanced for.
+- With more players or at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense is the S threshold I balanced for.
 
 ## 1.0.0
 

@@ -1,8 +1,8 @@
 # SNCompany
-This is basically going to hold all of my modding projects, for my convenience. Once each is ready they'll be split off under separate labels. I'm building towards a major routing overhaul, piece by piece.
+This is going to hold all of my modding projects, for my convenience. Once each is ready they'll be split off under separate labels. I'm building towards a major routing overhaul, piece by piece.
 
 ## Subsidies
-The company will now lower routing costs based on how well you clear the facility each day. A higher letter grade corresponds to a greater percentage off from routing, up to a maximum off (that also increases with grade). Works best with dynamic pricing.
+The company will now lower routing costs based on how well you clear the facility each day. A higher letter grade corresponds to a greater percentage off from routing, up to a maximum discount (that also increases with grade). Works best with dynamic pricing.
   - It is now most cost effective to move between moons throughout your quota, particularly in an outward fashion.
     - More moon variety per session
     - Increasing difficulty throughout quota
@@ -23,7 +23,7 @@ It takes into account:
   - Number of Fire exits
   - Traversal time across each vanilla moon
 
-With more players pr at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense/march is the S threshold it automatically balances for.
+With more players or at small dungeon sizes, it will not be possible to get an S. This is intentional. Four players 100% clearing adamance/offense/march is the S threshold it automatically balances for.
 
 ## Misc
 Fines are removed. Replaced by a gentle chiding.
